@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Presensi Lokasi Kang San</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 50px;
+      }
+      .spinner {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #4285f4;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🔍 Mendeteksi Lokasi...</h2>
+    <div class="spinner"></div>
+    <p>Mohon izinkan akses lokasi di browser Anda</p>
+
+    <script>
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxqzxopfQOD54A6ccZnf4_CSokcV31EDt5v5KKCKjST54vr713Jv5xjoC64ccPzA-0Y/exec";
+      const redirectURL = "https://docs.google.com/forms/d/e/1FAIpQLSdQNpUktUuB6UbHDXYZ123abc/formResponse"; // GANTI DENGAN LINK FORM KANG SAN
+
+      function sendLocation(lat, long) {
+        fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify({ latitude: lat, longitude: long }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(response => {
+          console.log("Lokasi dikirim:", lat, long);
+          window.location.href = https://forms.gle/UA9H4r8gw89DBZuEA;
+        })
+        .catch(error => {
+          alert("Gagal kirim lokasi. Coba lagi.");
+          console.error("Error:", error);
+        });
+      }
+
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(position => {
+            sendLocation(position.coords.latitude, position.coords.longitude);
+          }, error => {
+            alert("Tidak dapat mengakses lokasi. Izinkan lokasi di browser Anda.");
+          });
+        } else {
+          alert("Browser tidak mendukung geolokasi.");
+        }
+      }
+
+      getLocation();
+    </script>
+  </body>
+</html>
