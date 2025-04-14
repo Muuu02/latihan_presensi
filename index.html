@@ -30,46 +30,38 @@
     <p>Mohon izinkan akses lokasi di browser Anda</p>
 
     <script>
-      const scriptURL = "https://script.google.com/macros/s/AKfycbxqzxopfQOD54A6ccZnf4_CSokcV31EDt5v5KKCKjST54vr713Jv5xjoC64ccPzA-0Y/exec";
-      const redirectURL = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Link Form Kang San
+      const redirectURL = "https://docs.google.com/forms/d/e/1FAIpQLSd4DsSLJ5DAbX0fVLgTZv9MYGqjUG1h2QI-hOd5XmDOfcuunA/formResponse";
+      const latEntry = "entry.1326619979";  // Ganti kalau ternyata bukan ini untuk latitude
+      const longEntry = "entry.1947509853"; // Ganti kalau bukan ini longitude
 
       function sendLocation(lat, long) {
-        console.log("Mengirim lokasi:", lat, long);
-        fetch(scriptURL, {
+        const formData = new FormData();
+        formData.append(latEntry, lat);
+        formData.append(longEntry, long);
+
+        fetch(redirectURL, {
           method: "POST",
-          body: JSON.stringify({ latitude: lat, longitude: long }),
-          headers: {
-            "Content-Type": "application/json"
-          }
+          mode: "no-cors",
+          body: formData
         })
-        .then(response => {
-          if (response.ok) {
-            console.log("Lokasi berhasil dikirim");
-            window.location.href = redirectURL;
-          } else {
-            console.error("Response error:", response);
-            alert("Gagal kirim lokasi. Coba lagi.");
-          }
+        .then(() => {
+          window.location.href = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Ganti dengan link "Terima kasih" kalau perlu
         })
         .catch(error => {
-          console.error("Fetch error:", error);
           alert("Gagal kirim lokasi. Coba lagi.");
+          console.error("Error:", error);
         });
       }
 
       function getLocation() {
-        console.log("Mencoba mengambil lokasi...");
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(position => {
-            console.log("Lokasi ditemukan:", position.coords.latitude, position.coords.longitude);
             sendLocation(position.coords.latitude, position.coords.longitude);
           }, error => {
-            console.error("Geolokasi error:", error);
             alert("Tidak dapat mengakses lokasi. Izinkan lokasi di browser Anda.");
           });
         } else {
           alert("Browser tidak mendukung geolokasi.");
-          console.error("Geolokasi tidak didukung");
         }
       }
 
