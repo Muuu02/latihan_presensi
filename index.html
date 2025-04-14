@@ -31,34 +31,34 @@
 
     <script>
       const redirectURL = "https://docs.google.com/forms/d/e/1FAIpQLSd4DsSLJ5DAbX0fVLgTZv9MYGqjUG1h2QI-hOd5XmDOfcuunA/formResponse";
-      const nameEntry = "entry.1469410268";  // Ganti dengan entry ID untuk Nama
-      const cityEntry = "entry.1333593584";  // Ganti dengan entry ID untuk Kota
-      const latEntry = "entry.1326619979";  // Ganti dengan entry ID untuk Latitude
-      const longEntry = "entry.1947509853"; // Ganti dengan entry ID untuk Longitude
+      const latEntry = "entry.1326619979";  // Ganti kalau ternyata bukan ini untuk latitude
+      const longEntry = "entry.1947509853"; // Ganti kalau bukan ini longitude
 
       function sendLocation(lat, long) {
         const formData = new FormData();
-        formData.append(nameEntry, "Kang San");
-        formData.append(cityEntry, "Bandung");
         formData.append(latEntry, lat);
         formData.append(longEntry, long);
 
         fetch(redirectURL, {
           method: "POST",
+          mode: "no-cors",
           body: formData
         })
         .then(() => {
-          window.location.href = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Halaman Terima Kasih
+          console.log("Data terkirim");
+          window.location.href = "https://forms.gle/UA9H4r8gw89DBZuEA";  // Redirect setelah pengiriman sukses
         })
         .catch(error => {
-          alert("Gagal kirim lokasi. Coba lagi.");
           console.error("Error:", error);
+          alert("Gagal kirim lokasi. Coba lagi.");
         });
       }
 
       function getLocation() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(position => {
+            console.log("Latitude: ", position.coords.latitude);
+            console.log("Longitude: ", position.coords.longitude);
             sendLocation(position.coords.latitude, position.coords.longitude);
           }, error => {
             alert("Tidak dapat mengakses lokasi. Izinkan lokasi di browser Anda.");
