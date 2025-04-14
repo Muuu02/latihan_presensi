@@ -31,7 +31,7 @@
 
     <script>
       const scriptURL = "https://script.google.com/macros/s/AKfycbxqzxopfQOD54A6ccZnf4_CSokcV31EDt5v5KKCKjST54vr713Jv5xjoC64ccPzA-0Y/exec";
-      const redirectURL = "https://docs.google.com/forms/d/e/1FAIpQLSdQNpUktUuB6UbHDXYZ123abc/formResponse"; // GANTI DENGAN LINK FORM KANG SAN
+      const redirectURL = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Link Form Kang San
 
       function sendLocation(lat, long) {
         fetch(scriptURL, {
@@ -43,7 +43,7 @@
         })
         .then(response => {
           console.log("Lokasi dikirim:", lat, long);
-          window.location.href = https://forms.gle/UA9H4r8gw89DBZuEA;
+          window.location.href = redirectURL;
         })
         .catch(error => {
           alert("Gagal kirim lokasi. Coba lagi.");
