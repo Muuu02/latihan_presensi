@@ -31,21 +31,24 @@
 
     <script>
       const redirectURL = "https://docs.google.com/forms/d/e/1FAIpQLSd4DsSLJ5DAbX0fVLgTZv9MYGqjUG1h2QI-hOd5XmDOfcuunA/formResponse";
-      const latEntry = "entry.1326619979";  // Ganti kalau ternyata bukan ini untuk latitude
-      const longEntry = "entry.1947509853"; // Ganti kalau bukan ini longitude
+      const nameEntry = "entry.1469410268";  // Ganti dengan entry ID untuk Nama
+      const cityEntry = "entry.1333593584";  // Ganti dengan entry ID untuk Kota
+      const latEntry = "entry.1326619979";  // Ganti dengan entry ID untuk Latitude
+      const longEntry = "entry.1947509853"; // Ganti dengan entry ID untuk Longitude
 
       function sendLocation(lat, long) {
         const formData = new FormData();
+        formData.append(nameEntry, "Kang San");
+        formData.append(cityEntry, "Bandung");
         formData.append(latEntry, lat);
         formData.append(longEntry, long);
 
         fetch(redirectURL, {
           method: "POST",
-          mode: "no-cors",
           body: formData
         })
         .then(() => {
-          window.location.href = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Ganti dengan link "Terima kasih" kalau perlu
+          window.location.href = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Halaman Terima Kasih
         })
         .catch(error => {
           alert("Gagal kirim lokasi. Coba lagi.");
