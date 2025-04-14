@@ -34,6 +34,7 @@
       const redirectURL = "https://forms.gle/UA9H4r8gw89DBZuEA"; // Link Form Kang San
 
       function sendLocation(lat, long) {
+        console.log("Mengirim lokasi:", lat, long);
         fetch(scriptURL, {
           method: "POST",
           body: JSON.stringify({ latitude: lat, longitude: long }),
@@ -42,24 +43,33 @@
           }
         })
         .then(response => {
-          console.log("Lokasi dikirim:", lat, long);
-          window.location.href = redirectURL;
+          if (response.ok) {
+            console.log("Lokasi berhasil dikirim");
+            window.location.href = redirectURL;
+          } else {
+            console.error("Response error:", response);
+            alert("Gagal kirim lokasi. Coba lagi.");
+          }
         })
         .catch(error => {
+          console.error("Fetch error:", error);
           alert("Gagal kirim lokasi. Coba lagi.");
-          console.error("Error:", error);
         });
       }
 
       function getLocation() {
+        console.log("Mencoba mengambil lokasi...");
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(position => {
+            console.log("Lokasi ditemukan:", position.coords.latitude, position.coords.longitude);
             sendLocation(position.coords.latitude, position.coords.longitude);
           }, error => {
+            console.error("Geolokasi error:", error);
             alert("Tidak dapat mengakses lokasi. Izinkan lokasi di browser Anda.");
           });
         } else {
           alert("Browser tidak mendukung geolokasi.");
+          console.error("Geolokasi tidak didukung");
         }
       }
 
