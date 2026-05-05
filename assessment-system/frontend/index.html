@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistem Asesmen Kurikulum Merdeka - SD">
+    <title>Asesmen SD - Kurikulum Merdeka</title>
+    
+    <!-- Favicon (optional) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="js/dashboard.js" as="script">
+</head>
+<body>
+    <!-- ============================================
+         LOGIN SECTION
+         Ditampilkan jika user belum login
+         ============================================ -->
+    <section id="loginSection" class="login-container hidden">
+        <div class="login-card">
+            <div class="login-logo">
+                <!-- SVG Logo Buku -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            
+            <h1 class="login-title">Asesmen SD</h1>
+            <p class="login-subtitle">Sistem Penilaian Kurikulum Merdeka</p>
+            
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="apiKeyInput" class="form-label">API Key</label>
+                    <input 
+                        type="password" 
+                        id="apiKeyInput" 
+                        class="form-control" 
+                        placeholder="Masukkan API Key Anda"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    Masuk ke Dashboard
+                </button>
+            </form>
+            
+            <div class="mt-2 text-center text-muted" style="font-size: 0.75rem;">
+                <p>Hubungi administrator untuk mendapatkan API Key.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         DASHBOARD SECTION
+         Ditampilkan setelah login berhasil
+         ============================================ -->
+    <section id="dashboardSection" class="hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="container header-content">
+                <a href="#dashboard" class="logo">
+                    📚 Asesmen SD
+                </a>
+                
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                        <li><a href="#input-nilai" class="nav-link">Input Nilai</a></li>
+                        <li><a href="#siswa" class="nav-link">Data Siswa</a></li>
+                        <li><a href="#export" class="nav-link">Export</a></li>
+                    </ul>
+                </nav>
+                
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span id="userInfo" class="text-muted"></span>
+                    <button id="logoutBtn" class="btn btn-outline" style="font-size: 0.875rem;">
+                        Keluar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Statistik Grid -->
+            <div id="dashboard" class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Jumlah Siswa</div>
+                    <div class="stat-value" id="totalStudents">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Nilai Rata-rata</div>
+                    <div class="stat-value" id="averageScore">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Asesmen Hari Ini</div>
+                    <div class="stat-value" id="todayAssessments">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Kelas Aktif</div>
+                    <div class="stat-value" id="activeClasses">-</div>
+                </div>
+            </div>
+
+            <!-- Input Nilai Section -->
+            <div id="input-nilai" class="card mt-2">
+                <div class="card-header">
+                    <h2 class="card-title">Input Nilai Asesmen</h2>
+                </div>
+                
+                <form id="assessmentForm" novalidate>
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="form-group">
+                            <label for="studentCode" class="form-label">Kode Siswa *</label>
+                            <input type="text" id="studentCode" class="form-control" placeholder="SIS001" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject" class="form-label">Mata Pelajaran *</label>
+                            <select id="subject" class="form-control" required>
+                                <option value="">Pilih Mapel</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                <option value="IPA">IPA</option>
+                                <option value="IPS">IPS</option>
+                                <option value="PKn">PKn</option>
+                                <option value="Seni Budaya">Seni Budaya</option>
+                                <option value="PJOK">PJOK</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="score" class="form-label">Nilai (0-100) *</label>
+                            <input type="number" id="score" class="form-control" min="0" max="100" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="learningObjective" class="form-label">Tujuan Pembelajaran (TP)</label>
+                            <input type="text" id="learningObjective" class="form-control" placeholder="Contoh: Memahami operasi hitung dasar">
+                        </div>
+                    </div>
+                    
+                    <!-- Akomodasi ABK -->
+                    <div class="form-group mt-2">
+                        <label class="form-label">Akomodasi Khusus (ABK)</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="accommodations" value="waktu_tambah">
+                                Waktu Tambah
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="accommodations" value="modifikasi_instrumen">
+                                Modifikasi Instrumen
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="accommodations" value="pendampingan">
+                                Pendampingan
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="accommodations" value="ruang_terpisah">
+                                Ruang Terpisah
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-primary">
+                            Simpan & Generate Feedback AI
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Data Siswa Section -->
+            <div id="siswa" class="card mt-2">
+                <div class="card-header">
+                    <h2 class="card-title">Daftar Siswa</h2>
+                    <button id="refreshStudentBtn" class="btn btn-outline" onclick="loadStudentList()">
+                        Refresh
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Kelas</th>
+                                <th>Nilai Terakhir</th>
+                                <th>Predikat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div id="export" class="card mt-2">
+                <div class="card-header">
+                    <h2 class="card-title">Export Data</h2>
+                </div>
+                
+                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div class="form-group">
+                        <label for="exportClassId" class="form-label">Kelas</label>
+                        <select id="exportClassId" class="form-control">
+                            <option value="">Pilih Kelas</option>
+                            <option value="1A">1A</option>
+                            <option value="1B">1B</option>
+                            <option value="2A">2A</option>
+                            <option value="2B">2B</option>
+                            <option value="3A">3A</option>
+                            <option value="3B">3B</option>
+                            <option value="4A">4A</option>
+                            <option value="4B">4B</option>
+                            <option value="5A">5A</option>
+                            <option value="5B">5B</option>
+                            <option value="6A">6A</option>
+                            <option value="6B">6B</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exportSubject" class="form-label">Mata Pelajaran (Opsional)</label>
+                        <select id="exportSubject" class="form-control">
+                            <option value="">Semua Mapel</option>
+                            <option value="Matematika">Matematika</option>
+                            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            <option value="IPA">IPA</option>
+                            <option value="IPS">IPS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button id="exportBtn" class="btn btn-secondary btn-block">
+                            📥 Download CSV Rapor
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-2 text-muted" style="font-size: 0.875rem;">
+                    <p>File CSV akan diunduh dengan format sesuai template Rapor Pendidikan Kemendikbud.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Sistem Asesmen SD - Kurikulum Merdeka</p>
+                <p style="font-size: 0.75rem;">Compatible with BSKAP & UU PDP Indonesia</p>
+            </div>
+        </footer>
+    </section>
+
+    <!-- ============================================
+         MODALS
+         ============================================ -->
+    
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div id="feedbackContent">
+                <!-- Content will be injected by JS -->
+            </div>
+            <div class="mt-2 text-right">
+                <button class="btn btn-outline" onclick="closeModal('feedbackModal')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div id="profileContent">
+                <!-- Content will be injected by JS -->
+            </div>
+            <div class="mt-2 text-right">
+                <button class="btn btn-outline" onclick="closeModal('profileModal')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/dashboard.js"></script>
+    
+    <!-- Inline script untuk toggle sections berdasarkan hash -->
+    <script>
+        // Toggle section visibility based on hash
+        function updateSectionVisibility() {
+            const hash = window.location.hash || '#login';
+            const loginSection = document.getElementById('loginSection');
+            const dashboardSection = document.getElementById('dashboardSection');
+            
+            // Check if user is authenticated
+            const apiKey = localStorage.getItem('assessment_api_key');
+            
+            if (!apiKey && hash !== '#login') {
+                window.location.hash = '#login';
+                return;
+            }
+            
+            if (hash === '#login' || !apiKey) {
+                loginSection.classList.remove('hidden');
+                dashboardSection.classList.add('hidden');
+            } else {
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+            }
+        }
+        
+        // Listen for hash changes
+        window.addEventListener('hashchange', updateSectionVisibility);
+        
+        // Initial check
+        updateSectionVisibility();
+    </script>
+</body>
+</html>
